@@ -73,6 +73,7 @@ It is really convenient to define some hot-keys. For example:
 ------------------
 
 * X display name couldn't be specified for xkbswitch-daemon;
+* daemon wouldn't die on exit from X session;
 * documentation sucks (but bad sex is better than nothing);
 * manual installation really sucks (use distutils?);
 * nobody cares about this software 'cause nobody really needs more
