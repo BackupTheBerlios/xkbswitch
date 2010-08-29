@@ -76,16 +76,21 @@ get_layouts(PyObject* self, PyObject* args)
         if (config->variants[i] != NULL && *config->variants[i] != '\0') {
             gchar* str;
 
-            str = g_strconcat(config->layouts[i], "(", config->variants[i],
-                ")", NULL);
+            str = g_strconcat(config->layouts[i],
+                              "(",
+                              config->variants[i],
+                              ")", NULL);
             PyList_Append(list, Py_BuildValue("s", str));
             g_free(str);
 #if 0
             gchar buf[strlen(config->layouts[i]) +
 					  strlen(config->variants[i]) + sizeof("()")];
 
-            snprintf(buf, sizeof(buf), "%s(%s)", config->layouts[i],
-                config->variants[i]);
+            snprintf(buf,
+                     sizeof(buf),
+                     "%s(%s)",
+                     config->layouts[i],
+                     config->variants[i]);
             PyList_Append(list, Py_BuildValue("s", buf));
 #endif
         } else {

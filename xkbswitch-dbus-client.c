@@ -43,31 +43,31 @@ main(int argc, char** argv)
     connection = dbus_bus_get(DBUS_BUS_SESSION, &error);
     if (connection == NULL) {
         fprintf(stderr,
-				"Couldn't connect to session bus (error \"%s\")\n",
-				error.message);
+                "Couldn't connect to session bus (error \"%s\")\n",
+                error.message);
         return 1;
     }
 
     atexit(cleanup);
 
     request = dbus_message_new_method_call("de.berlios.xkbswitch.XkbSwitch",
-										   "/XkbSwitch",
-										   "de.berlios.xkbswitch.XkbSwitch",
-										   "activate_layout");
+                                           "/XkbSwitch",
+                                           "de.berlios.xkbswitch.XkbSwitch",
+                                           "activate_layout");
     if (request == NULL ||
         dbus_message_append_args(request,
-								 DBUS_TYPE_STRING,
-								 &argv[1],
-								 DBUS_TYPE_INVALID) != TRUE)
+                                 DBUS_TYPE_STRING,
+                                 &argv[1],
+                                 DBUS_TYPE_INVALID) != TRUE)
     {
         fprintf(stderr, "Couldn't construct DBus request\n");
         return 1;
     }
 
     reply = dbus_connection_send_with_reply_and_block(connection,
-													  request,
-													  -1,
-													  &error);
+                                                      request,
+                                                      -1,
+                                                      &error);
     if (reply == NULL) {
         fprintf(stderr,
                 "Couldn't call method (error \"%s\")\n",
