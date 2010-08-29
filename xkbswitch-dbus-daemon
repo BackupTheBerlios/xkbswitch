@@ -1,0 +1,58 @@
+#!/usr/bin/env python
+
+import dbus.service
+import gobject
+import sys
+
+from dbus.mainloop.glib import DBusGMainLoop
+from getopt import getopt, GetoptError
+from signal import signal, SIGINT, SIGTERM, SIGQUIT
+from xkbswitch import XkbSwitch
+
+class DBusXkbSwitch(dbus.service.Object, XkbSwitch):
+    def __init__(self, bus, display):
+        dbus.service.Object.__init__(self, bus, "/XkbSwitch")
+        XkbSwitch.__init__(self, display)
+
+    @dbus.service.method("de.berlios.xkbswitch.XkbSwitch",
+                         in_signature = "s",
+                         out_signature = "b")
+    def activate_layout(self, layout_name):
+        previous_layout = self.current_layout
+        try:
+            XkbSwitch.activate_layout(self, layout_name)
+        except:
+            return False
+        self.layout_changed(previous_layout, self.current_layout)
+        return True
+
+    @dbus.service.signal("de.berlios.xkbswitch.XkbSwitch",
+                         signature="ss")
+    def layout_changed(self, previous, current):
+        pass
+
+
+def usage():
+    print "Usage:", sys.argv[0], "[-h|--help] [-d dpy|--display=dpy]"
+
+
+if __name__ == "__main__":
+    try:
+        opts, args = getopt(sys.argv[1:], "hd:", ["help", "display="])
+    except GetoptError, error:
+        print error
+        usage()
+        sys.exit(1)
+    display = None
+    for opt, arg in opts:
+        if opt in ("-h", "--help"):
+            usage()
+            sys.exit()
+        elif opt in ("-d", "--display"):
+            display = arg
+    DBusGMainLoop(set_as_default=True)
+    loop = gobject.MainLoop()
+    bus = dbus.SessionBus()
+    name = dbus.service.BusName("de.berlios.xkbswitch.XkbSwitch", bus)
+    switch = DBusXkbSwitch(bus, display)
+    loop.run()

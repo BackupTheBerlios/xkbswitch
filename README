@@ -1,21 +1,20 @@
 1. Purpose
-----------
+-----------------------------------------------------------------------
 
-XkbSwitch is a simple piece of software to overcome the annoying
-limitation of Xkb, which allows only four keyboard groups to be
-used at a time. It is possible to get over the limitation by using
+XKBSwitch is a simple piece of software to overcome the annoying
+limitation of XKB, which allows only four keyboard groups to be used
+at a time. It is possible to get over the limitation by using
 self-made composite keyboard layouts or special input methods, but
-standard national layouts are better. XkbSwitch consists of the
+standard national layouts are better. XKBSwitch consists of the
 daemon, which listens on D-Bus and performs layout reloads (if
 necessary) and group locks. It tries to minimize the reloads by
 tracking layouts usage. Layout switch requests are performed through
-the trivial D-Bus interface (only one method), exported by the
-daemon, by very simple client program. The client program is
-implemented in C to minimize start-up time and uses only low-level
-D-Bus facilities.
+the trivial D-Bus interface (only one method), exported by the daemon,
+by very simple client program. The client program is implemented in C
+to minimize start-up time and uses only low-level D-Bus facilities.
 
-2. Installation
----------------
+2. Build and Installation
+-----------------------------------------------------------------------
 
 Dependencies are:
  * Python >=2.5;
@@ -25,69 +24,71 @@ Dependencies are:
 
 Build dependencies are:
  * C compiler;
- * GNU make.
+ * SCons.
 
-To build everything use:
+Just use SCons to build:
 
-$ make
+$ scons
 
-Installation is manual for now. xkbswitch and xkbswitch-daemon files
-should be copied to somewhere in your $PATH. For example:
+Installation is optional. System wide installation could be done like
+this:
 
-# cp xkbswitch xkbswitch-daemon /usr/local/bin
-$ cp xkbswitch xkbswitch-daemon ~/bin
+$ PREFIX=/usr/local/ scons install-ext install-bin
 
-Extension file xkbswitch.so should be copied where the python modules
-resides on your system. Usually it is something like
-/usr/local/lib/python2.5/site-packages/ or
-/usr/lib/python2.6/site-packages/.
+Default value for installation prefix is /usr/local. To install into
+certain user's directory just copy these files:
+
+ * _xkbswitch.so
+ * xkbswitch-dbus-client
+ * xkbswitch-dbus-daemon
+ * xkbswitch.py
+
+For example:
+
+$ cp _xkbswitch.so xkbswitch-dbus-client xkbswitch-dbus-daemon \
+ xkbswitch.py /home/nathalie/.local/bin
 
 3. Usage
---------
+-----------------------------------------------------------------------
 
-XkbSwitch daemon has to be started on running X session:
+XKBSwitch daemon has to be started on running X session:
 
-$ xkbswitch-daemon &
+$ xkbswitch-dbus-daemon &
 
-After this the xkbswitch client program should be used to switch
-keyboard layouts:
+After this the XKBSwitch client program may be used to switch keyboard
+layouts:
 
-$ xkbswitch 'gr(bare)'
-$ xkbswitch epo
-$ xkbswitch 'ru(typewriter)'
-$ xkbswitch es
-$ xkbswitch no_such_layout
-Layout switch failed
-$ xkbswitch ru
-$ xkbswitch us
+$ xkbswitch-dbus-client 'gr(bare)'
+$ xkbswitch-dbus-client epo
+$ xkbswitch-dbus-client 'ru(typewriter)'
+$ xkbswitch-dbus-client es
+$ xkbswitch-dbus-client no_such_layout
+Couldn't activate layout
+$ xkbswitch-dbus-client ru
+$ xkbswitch-dbus-client us
 
 It is really convenient to define some hot-keys. For example:
 
-<Alt+Shift+e>   execute "xkbswitch epo"
-<Alt+Shift+g>   execute "xkbswitch 'gr(bare)'"
-<Alt+Shift+i>   execute "xkbswitch is"
-<Alt+Shift+r>   execute "xkbswitch 'ru(typewriter)'"
-<Alt+Shift+s>   execute "xkbswitch sr"
+<Alt+Shift+e>   execute "xkbswitch-dbus-client epo"
+<Alt+Shift+g>   execute "xkbswitch-dbus-client 'gr(bare)'"
+<Alt+Shift+i>   execute "xkbswitch-dbus-client is"
+<Alt+Shift+r>   execute "xkbswitch-dbus-client 'ru(typewriter)'"
+<Alt+Shift+s>   execute "xkbswitch-dbus-client sr"
 
-4. Bugs & problems
-------------------
+4. Bugs and Problems
+-----------------------------------------------------------------------
 
-* X display name couldn't be specified for xkbswitch-daemon;
-* daemon wouldn't die on exit from X session;
-* documentation sucks (but bad sex is better than nothing);
-* manual installation really sucks (use distutils?);
-* nobody cares about this software 'cause nobody really needs more
-  than four Xkb groups.
+ * Nobody cares about this software 'cause nobody really needs more
+   than four XKB groups.
 
-5. TODOs
--------
+5. TODO
+-----------------------------------------------------------------------
 
-* D-Bus signals from daemon on layout change;
-* dump extension module and use ctypes;
-* kill bugs.
+ * Dump extension module and use ctypes?
+ * Dump extension module and use python-xklavier?
 
 6. Contacts
------------
+-----------------------------------------------------------------------
 
 Questions, corrections, suggestions, patches, blames, thanks or
 whatever else mail to arn@users.berlios.de.
